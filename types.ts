@@ -4,7 +4,7 @@ export interface StockItem {
   quantity: number;
   unit: string;
   imageUrl: string;
-  category: 'Food' | 'Beverage';
+  category: string;
   minStock: number;
 }
 

@@ -10,7 +10,7 @@ export const WARKOP_ITEMS: StockItem[] = [
     quantity: 0,
     unit: "Bks",
     imageUrl: getImg(1, 'noodle'),
-    category: 'Food',
+    category: 'Mie Instan',
     minStock: 10
   },
   {
@@ -19,7 +19,7 @@ export const WARKOP_ITEMS: StockItem[] = [
     quantity: 0,
     unit: "Bks",
     imageUrl: getImg(2, 'noodle'),
-    category: 'Food',
+    category: 'Mie Instan',
     minStock: 10
   },
   {
@@ -28,7 +28,7 @@ export const WARKOP_ITEMS: StockItem[] = [
     quantity: 0,
     unit: "Sachet",
     imageUrl: getImg(3, 'tea'),
-    category: 'Beverage',
+    category: 'Teh',
     minStock: 15
   },
   {
@@ -37,7 +37,7 @@ export const WARKOP_ITEMS: StockItem[] = [
     quantity: 0,
     unit: "Cup",
     imageUrl: getImg(4, 'energy'),
-    category: 'Beverage',
+    category: 'Minuman Segar',
     minStock: 20
   },
   {
@@ -46,7 +46,7 @@ export const WARKOP_ITEMS: StockItem[] = [
     quantity: 0,
     unit: "Sachet",
     imageUrl: getImg(5, 'tea'),
-    category: 'Beverage',
+    category: 'Teh',
     minStock: 5
   },
   {
@@ -55,7 +55,7 @@ export const WARKOP_ITEMS: StockItem[] = [
     quantity: 0,
     unit: "Bks",
     imageUrl: getImg(6, 'coffee'),
-    category: 'Beverage',
+    category: 'Kopi',
     minStock: 24
   },
   {
@@ -64,7 +64,7 @@ export const WARKOP_ITEMS: StockItem[] = [
     quantity: 0,
     unit: "Bks",
     imageUrl: getImg(7, 'noodle'),
-    category: 'Food',
+    category: 'Mie Instan',
     minStock: 10
   },
   {
@@ -73,7 +73,7 @@ export const WARKOP_ITEMS: StockItem[] = [
     quantity: 0,
     unit: "Bks",
     imageUrl: getImg(8, 'noodle'),
-    category: 'Food',
+    category: 'Mie Instan',
     minStock: 10
   },
   {
@@ -82,7 +82,7 @@ export const WARKOP_ITEMS: StockItem[] = [
     quantity: 0,
     unit: "Sachet",
     imageUrl: getImg(9, 'coffee'),
-    category: 'Beverage',
+    category: 'Kopi',
     minStock: 50
   },
   {
@@ -91,7 +91,7 @@ export const WARKOP_ITEMS: StockItem[] = [
     quantity: 0,
     unit: "Bks",
     imageUrl: getImg(10, 'noodle'),
-    category: 'Food',
+    category: 'Mie Instan',
     minStock: 15
   },
   {
@@ -100,7 +100,7 @@ export const WARKOP_ITEMS: StockItem[] = [
     quantity: 0,
     unit: "Sachet",
     imageUrl: getImg(11, 'orange'),
-    category: 'Beverage',
+    category: 'Minuman Segar',
     minStock: 20
   },
   {
@@ -109,7 +109,7 @@ export const WARKOP_ITEMS: StockItem[] = [
     quantity: 0,
     unit: "Sachet",
     imageUrl: getImg(12, 'tea'),
-    category: 'Beverage',
+    category: 'Teh',
     minStock: 5
   }
 ];

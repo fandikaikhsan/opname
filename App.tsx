@@ -1,22 +1,45 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { StockItem } from './types';
 import { WARKOP_ITEMS } from './constants';
 import StockCard from './components/StockCard';
 import SummarySheet from './components/SummarySheet';
-import { ClipboardList, Search, Menu } from 'lucide-react';
+import { ClipboardList, Search, Menu, ChevronDown, ChevronUp } from 'lucide-react';
 
 export default function App() {
   const [items, setItems] = useState<StockItem[]>(WARKOP_ITEMS);
   const [isSummaryOpen, setIsSummaryOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [collapsedCategories, setCollapsedCategories] = useState<Record<string, boolean>>({});
   
   const updatedCount = items.reduce((acc, item) => item.quantity > 0 ? acc + 1 : acc, 0);
   const totalItems = items.length;
 
   // Filter items based on search query
-  const filteredItems = items.filter(item => 
-    item.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredItems = useMemo(() => items.filter(item => 
+    item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    item.category.toLowerCase().includes(searchQuery.toLowerCase())
+  ), [items, searchQuery]);
+
+  // Group items by category
+  const groupedItems = useMemo(() => {
+    const groups: Record<string, StockItem[]> = {};
+    filteredItems.forEach(item => {
+      if (!groups[item.category]) {
+        groups[item.category] = [];
+      }
+      groups[item.category].push(item);
+    });
+    return groups;
+  }, [filteredItems]);
+
+  const categoryNames = Object.keys(groupedItems);
+
+  const toggleCategory = (category: string) => {
+    setCollapsedCategories(prev => ({
+      ...prev,
+      [category]: !prev[category]
+    }));
+  };
 
   const handleUpdateStock = (id: number, newQty: number) => {
     setItems(prevItems => 
@@ -65,23 +88,53 @@ export default function App() {
         </div>
       </header>
 
-      {/* Main Content Grid */}
-      <main className="p-4 max-w-md mx-auto">
-        {filteredItems.length === 0 ? (
+      {/* Main Content */}
+      <main className="p-4 max-w-md mx-auto space-y-6">
+        {categoryNames.length === 0 ? (
           <div className="text-center py-20 opacity-50">
             <p className="text-lg font-bold text-gray-400">Barang tidak ditemukan</p>
             <p className="text-sm text-gray-600">Coba kata kunci lain</p>
           </div>
         ) : (
-          <div className="grid grid-cols-2 gap-3.5">
-            {filteredItems.map(item => (
-              <StockCard 
-                key={item.id} 
-                item={item} 
-                onUpdate={handleUpdateStock} 
-              />
-            ))}
-          </div>
+          categoryNames.map(category => {
+            const isCollapsed = collapsedCategories[category];
+            const itemsInCategory = groupedItems[category];
+            
+            return (
+              <div key={category} className="space-y-3">
+                {/* Accordion Header */}
+                <button 
+                  onClick={() => toggleCategory(category)}
+                  className="w-full flex items-center justify-between py-2 group"
+                >
+                  <div className="flex items-center gap-3">
+                    <h2 className="text-lg font-bold text-white tracking-tight">{category}</h2>
+                    <span className="px-2 py-0.5 rounded-full bg-white/10 text-[10px] font-bold text-gray-400">
+                      {itemsInCategory.length}
+                    </span>
+                  </div>
+                  <div className={`p-1.5 rounded-full bg-white/5 text-gray-400 transition-all duration-300 ${isCollapsed ? '-rotate-90' : 'rotate-0'}`}>
+                    <ChevronDown size={18} />
+                  </div>
+                </button>
+
+                {/* Items Grid (Collapsible) */}
+                <div 
+                  className={`grid grid-cols-2 gap-3.5 transition-all duration-300 ease-in-out overflow-hidden ${
+                    isCollapsed ? 'max-h-0 opacity-0' : 'max-h-[2000px] opacity-100'
+                  }`}
+                >
+                  {itemsInCategory.map(item => (
+                    <StockCard 
+                      key={item.id} 
+                      item={item} 
+                      onUpdate={handleUpdateStock} 
+                    />
+                  ))}
+                </div>
+              </div>
+            );
+          })
         )}
       </main>
 
