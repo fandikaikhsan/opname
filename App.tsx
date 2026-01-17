@@ -81,7 +81,7 @@ export default function App() {
       {/* Sticky Header Container (Includes Top Bar & Search) */}
       <header className="sticky top-0 z-30 bg-black/90 backdrop-blur-xl border-b border-white/10 shadow-2xl shadow-black/50">
         {/* Top Bar */}
-        <div className="flex justify-between items-center max-w-md mx-auto px-4 py-4">
+        <div className="flex justify-between items-center max-w-md md:max-w-7xl mx-auto px-4 py-4 transition-all duration-300">
           <div>
             <div className="flex items-center gap-2">
               <h1 className="text-2xl font-black tracking-tight text-white">Opname.</h1>
@@ -95,7 +95,7 @@ export default function App() {
         </div>
 
         {/* Search Bar (Now part of sticky header) */}
-        <div className="px-4 pb-4 max-w-md mx-auto">
+        <div className="px-4 pb-4 max-w-md md:max-w-7xl mx-auto transition-all duration-300">
           <div className="flex items-center gap-3 bg-white/5 p-3.5 rounded-2xl border border-white/5 focus-within:border-white/20 focus-within:bg-white/10 transition-all">
              <Search size={20} className="text-gray-500 ml-1 shrink-0" />
              <input 
@@ -110,7 +110,7 @@ export default function App() {
       </header>
 
       {/* Main Content */}
-      <main className="p-4 max-w-md mx-auto space-y-6">
+      <main className="p-4 max-w-md md:max-w-7xl mx-auto space-y-6 transition-all duration-300">
         {categoryNames.length === 0 ? (
           <div className="text-center py-20 opacity-50">
             <p className="text-lg font-bold text-gray-400">Barang tidak ditemukan</p>
@@ -142,7 +142,7 @@ export default function App() {
 
                 {/* Items Grid (Collapsible) */}
                 <div 
-                  className={`grid grid-cols-2 gap-3.5 transition-all duration-300 ease-in-out overflow-hidden ${
+                  className={`grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3.5 md:gap-5 transition-all duration-300 ease-in-out overflow-hidden ${
                     !isExpanded ? 'max-h-0 opacity-0' : 'max-h-[2000px] opacity-100'
                   }`}
                 >
@@ -162,7 +162,7 @@ export default function App() {
 
       {/* Sticky Bottom Button */}
       <div className="fixed bottom-0 left-0 right-0 p-5 bg-gradient-to-t from-black via-black/95 to-transparent pointer-events-none z-40">
-        <div className="max-w-md mx-auto pointer-events-auto">
+        <div className="max-w-md md:max-w-lg mx-auto pointer-events-auto transition-all duration-300">
           <button 
             onClick={() => setIsSummaryOpen(true)}
             className="group w-full bg-gray-900 border border-white/10 rounded-2xl p-1.5 flex items-center justify-between transition-all active:scale-[0.98] shadow-2xl shadow-black/80"

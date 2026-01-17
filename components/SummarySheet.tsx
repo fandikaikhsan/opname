@@ -33,7 +33,7 @@ const SummarySheet: React.FC<SummarySheetProps> = ({ items, isOpen, onClose, onS
       />
 
       {/* Sheet Content */}
-      <div className="relative z-10 bg-gray-950 w-full max-w-md rounded-t-3xl border-t border-white/10 shadow-2xl flex flex-col h-[90vh] animate-slide-up overflow-hidden">
+      <div className="relative z-10 bg-gray-950 w-full max-w-md md:max-w-2xl rounded-t-3xl md:rounded-3xl md:mb-6 border-t md:border border-white/10 shadow-2xl flex flex-col h-[90vh] md:h-[85vh] animate-slide-up overflow-hidden transition-all duration-300">
         
         {/* Header */}
         <div className="shrink-0 pt-5 px-5 pb-0 bg-gray-950">
@@ -144,7 +144,7 @@ const SummarySheet: React.FC<SummarySheetProps> = ({ items, isOpen, onClose, onS
         </div>
 
         {/* Footer */}
-        <div className="shrink-0 p-5 border-t border-white/10 bg-gray-950 pb-8">
+        <div className="shrink-0 p-5 border-t border-white/10 bg-gray-950 pb-8 md:pb-5">
            <div className="flex justify-between items-center mb-5 px-1">
              <div className="flex flex-col">
                <span className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Progres</span>
