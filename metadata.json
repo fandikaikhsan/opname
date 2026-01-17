@@ -1,5 +1,7 @@
 {
   "name": "Warkop Opname",
   "description": "A streamlined mobile-first stock opname application designed for rapid inventory counting in a Warkop environment.",
-  "requestFramePermissions": []
+  "requestFramePermissions": [
+    "camera"
+  ]
 }
