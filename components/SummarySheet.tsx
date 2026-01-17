@@ -7,11 +7,12 @@ interface SummarySheetProps {
   isOpen: boolean;
   onClose: () => void;
   onSubmit: () => void;
+  onItemClick: (item: StockItem) => void;
 }
 
 type Tab = 'filled' | 'empty';
 
-const SummarySheet: React.FC<SummarySheetProps> = ({ items, isOpen, onClose, onSubmit }) => {
+const SummarySheet: React.FC<SummarySheetProps> = ({ items, isOpen, onClose, onSubmit, onItemClick }) => {
   const [activeTab, setActiveTab] = useState<Tab>('filled');
 
   const filledItems = items.filter(item => item.quantity > 0);
@@ -108,7 +109,11 @@ const SummarySheet: React.FC<SummarySheetProps> = ({ items, isOpen, onClose, onS
               </thead>
               <tbody className="divide-y divide-white/5">
                 {displayItems.map((item) => (
-                  <tr key={item.id} className="group hover:bg-white/[0.02] transition-colors">
+                  <tr 
+                    key={item.id} 
+                    onClick={() => onItemClick(item)}
+                    className="group hover:bg-white/[0.02] transition-colors cursor-pointer active:bg-white/5"
+                  >
                     <td className="py-4 px-5 align-middle">
                       <p className="font-medium text-white text-sm leading-snug">{item.name}</p>
                       <div className="flex items-center gap-2 mt-1">

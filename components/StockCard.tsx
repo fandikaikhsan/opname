@@ -95,6 +95,7 @@ const StockCard: React.FC<StockCardProps> = ({ item, onUpdate }) => {
 
   return (
     <div 
+      id={`item-${item.id}`}
       className={`
         relative overflow-hidden rounded-3xl shadow-lg
         flex flex-col select-none touch-none aspect-[3/4.2]

@@ -9,7 +9,8 @@ export default function App() {
   const [items, setItems] = useState<StockItem[]>(WARKOP_ITEMS);
   const [isSummaryOpen, setIsSummaryOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [collapsedCategories, setCollapsedCategories] = useState<Record<string, boolean>>({});
+  // Changed to track expanded state instead of collapsed, defaulting to closed (false)
+  const [expandedCategories, setExpandedCategories] = useState<Record<string, boolean>>({});
   
   const updatedCount = items.reduce((acc, item) => item.quantity > 0 ? acc + 1 : acc, 0);
   const totalItems = items.length;
@@ -35,7 +36,7 @@ export default function App() {
   const categoryNames = Object.keys(groupedItems);
 
   const toggleCategory = (category: string) => {
-    setCollapsedCategories(prev => ({
+    setExpandedCategories(prev => ({
       ...prev,
       [category]: !prev[category]
     }));
@@ -52,6 +53,26 @@ export default function App() {
   const handleSubmit = () => {
     alert(`Mengirim laporan opname untuk ${updatedCount} barang!`);
     setIsSummaryOpen(false);
+  };
+
+  const handleJumpToItem = (item: StockItem) => {
+    // 1. Close Modal
+    setIsSummaryOpen(false);
+
+    // 2. Expand Category (Set to true)
+    setExpandedCategories(prev => ({
+      ...prev,
+      [item.category]: true
+    }));
+
+    // 3. Scroll to item (Wait for render/animation frame)
+    setTimeout(() => {
+      const element = document.getElementById(`item-${item.id}`);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        // Optional: Add a flash effect or focus here if desired
+      }
+    }, 150);
   };
 
   return (
@@ -97,7 +118,8 @@ export default function App() {
           </div>
         ) : (
           categoryNames.map(category => {
-            const isCollapsed = collapsedCategories[category];
+            // Expand automatically if searching, otherwise use state (default false)
+            const isExpanded = expandedCategories[category] || searchQuery.length > 0;
             const itemsInCategory = groupedItems[category];
             
             return (
@@ -113,7 +135,7 @@ export default function App() {
                       {itemsInCategory.length}
                     </span>
                   </div>
-                  <div className={`p-1.5 rounded-full bg-white/5 text-gray-400 transition-all duration-300 ${isCollapsed ? '-rotate-90' : 'rotate-0'}`}>
+                  <div className={`p-1.5 rounded-full bg-white/5 text-gray-400 transition-all duration-300 ${!isExpanded ? '-rotate-90' : 'rotate-0'}`}>
                     <ChevronDown size={18} />
                   </div>
                 </button>
@@ -121,7 +143,7 @@ export default function App() {
                 {/* Items Grid (Collapsible) */}
                 <div 
                   className={`grid grid-cols-2 gap-3.5 transition-all duration-300 ease-in-out overflow-hidden ${
-                    isCollapsed ? 'max-h-0 opacity-0' : 'max-h-[2000px] opacity-100'
+                    !isExpanded ? 'max-h-0 opacity-0' : 'max-h-[2000px] opacity-100'
                   }`}
                 >
                   {itemsInCategory.map(item => (
@@ -177,6 +199,7 @@ export default function App() {
         isOpen={isSummaryOpen} 
         onClose={() => setIsSummaryOpen(false)}
         onSubmit={handleSubmit}
+        onItemClick={handleJumpToItem}
       />
     </div>
   );
