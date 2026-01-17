@@ -91,7 +91,7 @@ const StockCard: React.FC<StockCardProps> = ({ item, onUpdate }) => {
       id={`item-${item.id}`}
       className={`
         relative overflow-hidden rounded-3xl shadow-lg
-        flex flex-col select-none aspect-[3/4.2]
+        flex flex-col select-none aspect-[3/4.8]
         transition-all duration-200 ease-out
         ${getGradient()}
       `}
@@ -111,7 +111,7 @@ const StockCard: React.FC<StockCardProps> = ({ item, onUpdate }) => {
       </div>
 
       {/* Bottom: Content Section */}
-      <div className="flex-1 p-3 flex flex-col justify-between relative z-10 text-white">
+      <div className="flex-1 p-3 pb-4 flex flex-col justify-between relative z-10 text-white">
         
         {/* Header Info */}
         <div className="pointer-events-none mb-1">
