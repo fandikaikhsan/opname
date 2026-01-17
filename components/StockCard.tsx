@@ -8,15 +8,13 @@ interface StockCardProps {
 }
 
 const StockCard: React.FC<StockCardProps> = ({ item, onUpdate }) => {
-  const [isPressed, setIsPressed] = useState(false);
+  const [isPlusPressed, setIsPlusPressed] = useState(false);
   
   const intervalRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const speedRef = useRef<number>(400); 
   const quantityRef = useRef(item.quantity);
   
-  const [scale, setScale] = useState(1);
-
   // Sync ref
   React.useEffect(() => {
     quantityRef.current = item.quantity;
@@ -42,10 +40,6 @@ const StockCard: React.FC<StockCardProps> = ({ item, onUpdate }) => {
     }
   };
 
-  const increment = useCallback(() => {
-    onUpdate(item.id, item.quantity + 1);
-  }, [item.id, item.quantity, onUpdate]);
-
   const decrement = (e: React.MouseEvent | React.TouchEvent) => {
     e.stopPropagation();
     if (item.quantity > 0) {
@@ -53,11 +47,11 @@ const StockCard: React.FC<StockCardProps> = ({ item, onUpdate }) => {
     }
   };
 
-  // --- Touch Logic ---
-  const handlePointerDown = (e: React.PointerEvent) => {
-    e.preventDefault();
-    setIsPressed(true);
-    setScale(0.96);
+  // --- Touch Logic (Plus Button) ---
+  const handlePlusDown = (e: React.PointerEvent) => {
+    e.preventDefault(); // Prevent scrolling while holding button
+    e.stopPropagation();
+    setIsPlusPressed(true);
 
     onUpdate(item.id, quantityRef.current + 1);
     speedRef.current = 400;
@@ -77,19 +71,18 @@ const StockCard: React.FC<StockCardProps> = ({ item, onUpdate }) => {
     }, 400); 
   };
 
-  const handlePointerUp = (e: React.PointerEvent) => {
+  const handlePlusUp = (e: React.PointerEvent) => {
     e.preventDefault();
-    setIsPressed(false);
-    setScale(1);
+    setIsPlusPressed(false);
     if (intervalRef.current) clearTimeout(intervalRef.current);
     if (timeoutRef.current) clearTimeout(timeoutRef.current);
     intervalRef.current = null;
     timeoutRef.current = null;
   };
 
-  const handlePointerLeave = (e: React.PointerEvent) => {
-    if (isPressed) {
-      handlePointerUp(e);
+  const handlePlusLeave = (e: React.PointerEvent) => {
+    if (isPlusPressed) {
+      handlePlusUp(e);
     }
   };
 
@@ -98,29 +91,22 @@ const StockCard: React.FC<StockCardProps> = ({ item, onUpdate }) => {
       id={`item-${item.id}`}
       className={`
         relative overflow-hidden rounded-3xl shadow-lg
-        flex flex-col select-none touch-none aspect-[3/4.2]
+        flex flex-col select-none aspect-[3/4.2]
         transition-all duration-200 ease-out
         ${getGradient()}
       `}
-      style={{ transform: `scale(${scale})` }}
-      onPointerDown={handlePointerDown}
-      onPointerUp={handlePointerUp}
-      onPointerLeave={handlePointerLeave}
     >
       {/* Texture Overlay */}
       <div className="absolute inset-0 bg-white opacity-[0.03] pointer-events-none mix-blend-overlay"></div>
       
-      {/* Press Ripple Effect */}
-      <div className={`absolute inset-0 bg-white transition-opacity duration-150 pointer-events-none ${isPressed ? 'opacity-20' : 'opacity-0'}`} />
-
-      {/* Top: Image Section (30%) - Reduced height for more content space */}
+      {/* Top: Image Section (30%) */}
       <div className="h-[30%] w-full relative shrink-0 bg-black/20">
         <img 
           src={item.imageUrl} 
           alt={item.name}
           className="w-full h-full object-cover pointer-events-none"
         />
-        {/* Subtle gradient at bottom of image to blend, but not cover */}
+        {/* Subtle gradient at bottom of image to blend */}
         <div className="absolute inset-x-0 bottom-0 h-8 bg-gradient-to-t from-black/20 to-transparent pointer-events-none" />
       </div>
 
@@ -146,29 +132,40 @@ const StockCard: React.FC<StockCardProps> = ({ item, onUpdate }) => {
           </p>
         </div>
 
-        {/* Counter Area - Optimized for visibility */}
+        {/* Counter Area */}
         <div className="flex items-end justify-between mt-auto pt-2">
           <div className="flex flex-col">
-            {/* Reduced from text-5xl to text-4xl to prevent cutoff */}
             <span className="text-4xl font-black tracking-tighter drop-shadow-xl tabular-nums leading-none">
               {item.quantity}
             </span>
             <span className="text-xs font-semibold text-white/80 ml-0.5 mt-1">{item.unit}</span>
           </div>
 
-          <button 
-            onClick={decrement}
-            onPointerDown={(e) => e.stopPropagation()} 
-            className="w-11 h-11 flex-shrink-0 flex items-center justify-center rounded-full bg-black/30 hover:bg-black/50 active:bg-black/60 backdrop-blur-md border border-white/20 transition-all shadow-lg z-20"
-          >
-            <Minus size={22} className="text-white stroke-[3px]" />
-          </button>
-        </div>
-      </div>
+          <div className="flex items-center gap-2">
+            <button 
+              onClick={decrement}
+              onPointerDown={(e) => e.stopPropagation()} 
+              className="w-10 h-10 flex-shrink-0 flex items-center justify-center rounded-full bg-black/20 hover:bg-black/40 active:bg-black/50 backdrop-blur-md border border-white/10 transition-all shadow-lg z-20"
+            >
+              <Minus size={18} className="text-white stroke-[3px]" />
+            </button>
 
-      {/* Hint Icon */}
-      <div className="absolute top-2 right-2 text-white drop-shadow-md pointer-events-none">
-        <Plus size={20} strokeWidth={3} />
+            <button 
+              onPointerDown={handlePlusDown}
+              onPointerUp={handlePlusUp}
+              onPointerLeave={handlePlusLeave}
+              className={`
+                w-12 h-12 flex-shrink-0 flex items-center justify-center rounded-full 
+                backdrop-blur-md border border-white/20 transition-all shadow-lg z-20 touch-none
+                ${isPlusPressed 
+                  ? 'bg-white text-black scale-95 shadow-none' 
+                  : 'bg-black/30 text-white hover:bg-black/50'}
+              `}
+            >
+              <Plus size={24} className="stroke-[3px]" />
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   );
