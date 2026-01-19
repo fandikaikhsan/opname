@@ -269,7 +269,7 @@ const ScannerModal: React.FC<ScannerModalProps> = ({ isOpen, onClose, onSave }) 
                     />
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 gap-4">
                     <div>
                         <label className="text-[10px] uppercase font-bold text-gray-500 mb-1.5 block">Tanggal</label>
                         <input 
