@@ -264,31 +264,30 @@ const ScannerModal: React.FC<ScannerModalProps> = ({ isOpen, onClose, onSave }) 
                         type="text" 
                         value={parsedData.supplierName} 
                         onChange={(e) => setParsedData({...parsedData, supplierName: e.target.value})}
-                        className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-emerald-500 outline-none font-medium"
+                        className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-emerald-500 outline-none font-medium appearance-none"
                         placeholder="Nama Toko / Supplier"
                     />
                 </div>
 
-                <div className="grid grid-cols-1 gap-4">
-                    <div>
-                        <label className="text-[10px] uppercase font-bold text-gray-500 mb-1.5 block">Tanggal</label>
-                        <input 
-                            type="date" 
-                            value={parsedData.date} 
-                            onChange={(e) => setParsedData({...parsedData, date: e.target.value})}
-                            className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-emerald-500 outline-none font-medium text-sm"
-                        />
-                    </div>
-                    <div>
-                        <label className="text-[10px] uppercase font-bold text-gray-500 mb-1.5 block">Total (Rp)</label>
-                        <input 
-                            type="text" 
-                            value={displayAmount}
-                            onChange={handleAmountChange}
-                            className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-emerald-500 outline-none font-medium text-right"
-                            placeholder="0"
-                        />
-                    </div>
+                <div>
+                    <label className="text-[10px] uppercase font-bold text-gray-500 mb-1.5 block">Tanggal</label>
+                    <input 
+                        type="date" 
+                        value={parsedData.date} 
+                        onChange={(e) => setParsedData({...parsedData, date: e.target.value})}
+                        className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-emerald-500 outline-none font-medium text-sm appearance-none block min-w-0"
+                    />
+                </div>
+
+                <div>
+                    <label className="text-[10px] uppercase font-bold text-gray-500 mb-1.5 block">Total (Rp)</label>
+                    <input 
+                        type="text" 
+                        value={displayAmount}
+                        onChange={handleAmountChange}
+                        className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-emerald-500 outline-none font-medium text-right appearance-none"
+                        placeholder="0"
+                    />
                 </div>
 
                 <div>
