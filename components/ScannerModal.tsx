@@ -34,6 +34,8 @@ const ScannerModal: React.FC<ScannerModalProps> = ({ isOpen, onClose, onSave }) 
       setPreviewUrl(base64String);
       
       const base64Data = base64String.split(',')[1];
+      // Default to jpeg if type is missing/empty
+      const mimeType = file.type || 'image/jpeg';
 
       try {
         const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
@@ -42,7 +44,7 @@ const ScannerModal: React.FC<ScannerModalProps> = ({ isOpen, onClose, onSave }) 
           model: 'gemini-3-flash-preview',
           contents: {
             parts: [
-              { inlineData: { mimeType: file.type, data: base64Data } },
+              { inlineData: { mimeType: mimeType, data: base64Data } },
               { text: "Analyze this receipt. Return a JSON with: supplierName, date (YYYY-MM-DD), totalAmount (number), and items (array of name, qty, unit, price). If info is missing, use reasonable defaults or empty strings." }
             ]
           },
@@ -86,11 +88,19 @@ const ScannerModal: React.FC<ScannerModalProps> = ({ isOpen, onClose, onSave }) 
           });
           setStep('edit');
         } else {
-           throw new Error("No data returned");
+           throw new Error("No data returned from AI");
         }
-      } catch (error) {
+      } catch (error: any) {
         console.error("Gemini Error:", error);
-        alert("Gagal memproses gambar. Silakan isi manual.");
+        
+        let errorMsg = "Gagal memproses gambar.";
+        if (error instanceof Error) {
+            errorMsg += `\nDetail: ${error.message}`;
+        }
+        
+        alert(errorMsg + "\n\nSilakan isi data secara manual.");
+        
+        // Fallback to manual entry with the image
         setParsedData({
             id: Date.now().toString(),
             supplierName: '',
