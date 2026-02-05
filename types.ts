@@ -33,3 +33,5 @@ export interface Invoice {
   imageUrl?: string; // Preview of the receipt
   createdAt: number;
 }
+
+export type StockCondition = 'bahaya' | 'low' | 'cukup' | 'banyak';
