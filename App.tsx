@@ -96,7 +96,7 @@ export default function App() {
 
       <footer className="p-6 text-center">
         <p className="text-[10px] text-gray-600 font-bold uppercase tracking-widest">
-          Warkop POS System v1.0
+          Inventory Management System
         </p>
       </footer>
     </div>

@@ -4,6 +4,7 @@ import { WARKOP_ITEMS } from '../constants';
 import { STOCK_CONDITION_CONFIG, STOCK_REPORT_INFO } from '../config';
 import { ArrowLeft, FileText, Phone, User, Clock, ArrowUpDown, ArrowUp, ArrowDown, Search } from 'lucide-react';
 import ReportModal from './ReportModal';
+import ContactSupplierModal from './ContactSupplierModal';
 
 type SortColumn = 'name' | 'condition' | 'quantity' | 'unit' | 'minStock';
 type SortDirection = 'asc' | 'desc';
@@ -82,6 +83,9 @@ export default function CheckStockFeature({ onBack }: Props) {
 
     // Report modal state
     const [isReportModalOpen, setIsReportModalOpen] = useState(false);
+
+    // Contact supplier modal state
+    const [isContactSupplierModalOpen, setIsContactSupplierModalOpen] = useState(false);
 
     // Filtered items based on search
     const filteredItems = useMemo(() => {
@@ -313,8 +317,8 @@ export default function CheckStockFeature({ onBack }: Props) {
                             <span>Generate Report</span>
                         </button>
                         <button
-                            className="group flex-1 bg-white/10 rounded-xl px-4 py-3.5 flex items-center justify-center gap-2.5 border border-white/5 text-gray-400 font-bold text-sm opacity-60 cursor-not-allowed transition-all"
-                            disabled
+                            onClick={() => setIsContactSupplierModalOpen(true)}
+                            className="group flex-1 bg-orange-500/20 hover:bg-orange-500/30 rounded-xl px-4 py-3.5 flex items-center justify-center gap-2.5 border border-orange-500/30 text-orange-400 font-bold text-sm transition-all active:scale-[0.98]"
                         >
                             <Phone size={18} />
                             <span>Contact Supplier</span>
@@ -327,6 +331,13 @@ export default function CheckStockFeature({ onBack }: Props) {
             <ReportModal
                 isOpen={isReportModalOpen}
                 onClose={() => setIsReportModalOpen(false)}
+                items={items}
+            />
+
+            {/* Contact Supplier Modal */}
+            <ContactSupplierModal
+                isOpen={isContactSupplierModalOpen}
+                onClose={() => setIsContactSupplierModalOpen(false)}
                 items={items}
             />
         </div>
