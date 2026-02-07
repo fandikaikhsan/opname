@@ -1,8 +1,19 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { StockItem, StockCondition } from '../types';
 import { WARKOP_ITEMS } from '../constants';
 import { STOCK_CONDITION_CONFIG, STOCK_REPORT_INFO } from '../config';
-import { ArrowLeft, FileText, Phone, User, Clock } from 'lucide-react';
+import { ArrowLeft, FileText, Phone, User, Clock, ArrowUpDown, ArrowUp, ArrowDown, Search } from 'lucide-react';
+
+type SortColumn = 'name' | 'condition' | 'quantity' | 'unit' | 'minStock';
+type SortDirection = 'asc' | 'desc';
+
+// Condition priority for sorting (lower = more critical)
+const CONDITION_PRIORITY: Record<StockCondition, number> = {
+    bahaya: 0,
+    low: 1,
+    cukup: 2,
+    banyak: 3,
+};
 
 interface Props {
     onBack: () => void;
@@ -61,6 +72,76 @@ export default function CheckStockFeature({ onBack }: Props) {
         return counts;
     }, [items]);
 
+    // Sorting state
+    const [sortColumn, setSortColumn] = useState<SortColumn | null>(null);
+    const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
+
+    // Search state
+    const [searchQuery, setSearchQuery] = useState("");
+
+    // Filtered items based on search
+    const filteredItems = useMemo(() => {
+        if (!searchQuery.trim()) return items;
+        const query = searchQuery.toLowerCase();
+        return items.filter(item =>
+            item.name.toLowerCase().includes(query) ||
+            item.category.toLowerCase().includes(query)
+        );
+    }, [items, searchQuery]);
+
+    // Handle column header click
+    const handleSort = (column: SortColumn) => {
+        if (sortColumn === column) {
+            // Toggle direction if same column
+            setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+        } else {
+            // New column, start with ascending
+            setSortColumn(column);
+            setSortDirection('asc');
+        }
+    };
+
+    // Sort icon component
+    const SortIcon = ({ column }: { column: SortColumn }) => {
+        if (sortColumn !== column) {
+            return <ArrowUpDown size={12} className="opacity-40" />;
+        }
+        return sortDirection === 'asc'
+            ? <ArrowUp size={12} className="text-purple-400" />
+            : <ArrowDown size={12} className="text-purple-400" />;
+    };
+
+    // Sorted items (apply to filtered items)
+    const sortedItems = useMemo(() => {
+        if (!sortColumn) return filteredItems;
+
+        return [...filteredItems].sort((a, b) => {
+            let comparison = 0;
+
+            switch (sortColumn) {
+                case 'name':
+                    comparison = a.name.localeCompare(b.name);
+                    break;
+                case 'condition':
+                    const condA = getStockCondition(a.quantity, a.minStock);
+                    const condB = getStockCondition(b.quantity, b.minStock);
+                    comparison = CONDITION_PRIORITY[condA] - CONDITION_PRIORITY[condB];
+                    break;
+                case 'quantity':
+                    comparison = a.quantity - b.quantity;
+                    break;
+                case 'unit':
+                    comparison = a.unit.localeCompare(b.unit);
+                    break;
+                case 'minStock':
+                    comparison = a.minStock - b.minStock;
+                    break;
+            }
+
+            return sortDirection === 'asc' ? comparison : -comparison;
+        });
+    }, [filteredItems, sortColumn, sortDirection]);
+
     return (
         <div className="min-h-screen bg-black text-white pb-40 font-sans">
             {/* Scrollable Content Wrapper with Animation */}
@@ -96,7 +177,7 @@ export default function CheckStockFeature({ onBack }: Props) {
                         </div>
 
                         {/* Status Summary Chips */}
-                        <div className="flex flex-wrap gap-2">
+                        <div className="flex flex-wrap gap-2 mb-4">
                             {(['bahaya', 'low', 'cukup', 'banyak'] as StockCondition[]).map(condition => (
                                 <div
                                     key={condition}
@@ -106,6 +187,18 @@ export default function CheckStockFeature({ onBack }: Props) {
                                     <span>{conditionCounts[condition]}</span>
                                 </div>
                             ))}
+                        </div>
+
+                        {/* Search Bar */}
+                        <div className="flex items-center gap-3 bg-white/5 p-3.5 rounded-2xl border border-white/5 focus-within:border-white/20 focus-within:bg-white/10 transition-all">
+                            <Search size={20} className="text-gray-500 ml-1 shrink-0" />
+                            <input
+                                type="text"
+                                placeholder="Cari Item..."
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                                className="w-full bg-transparent outline-none text-base placeholder:text-gray-600 font-medium text-gray-200"
+                            />
                         </div>
                     </div>
                 </header>
@@ -117,15 +210,55 @@ export default function CheckStockFeature({ onBack }: Props) {
                             <table className="w-full text-left border-collapse min-w-[600px]">
                                 <thead className="bg-gray-900/90 sticky top-0 z-10">
                                     <tr className="text-[10px] font-bold text-gray-500 uppercase tracking-widest border-b border-white/10">
-                                        <th className="py-4 px-5">Item</th>
-                                        <th className="py-4 px-3 text-center">Kondisi</th>
-                                        <th className="py-4 px-3 text-right">Qty</th>
-                                        <th className="py-4 px-3 text-center">Unit</th>
-                                        <th className="py-4 px-3 text-right">Min Restock</th>
+                                        <th
+                                            className="py-4 px-5 cursor-pointer hover:text-gray-300 transition-colors select-none"
+                                            onClick={() => handleSort('name')}
+                                        >
+                                            <div className="flex items-center gap-1.5">
+                                                <span>Item</span>
+                                                <SortIcon column="name" />
+                                            </div>
+                                        </th>
+                                        <th
+                                            className="py-4 px-3 text-center cursor-pointer hover:text-gray-300 transition-colors select-none"
+                                            onClick={() => handleSort('condition')}
+                                        >
+                                            <div className="flex items-center justify-center gap-1.5">
+                                                <span>Kondisi</span>
+                                                <SortIcon column="condition" />
+                                            </div>
+                                        </th>
+                                        <th
+                                            className="py-4 px-3 text-right cursor-pointer hover:text-gray-300 transition-colors select-none"
+                                            onClick={() => handleSort('quantity')}
+                                        >
+                                            <div className="flex items-center justify-end gap-1.5">
+                                                <span>Qty</span>
+                                                <SortIcon column="quantity" />
+                                            </div>
+                                        </th>
+                                        <th
+                                            className="py-4 px-3 text-center cursor-pointer hover:text-gray-300 transition-colors select-none"
+                                            onClick={() => handleSort('unit')}
+                                        >
+                                            <div className="flex items-center justify-center gap-1.5">
+                                                <span>Unit</span>
+                                                <SortIcon column="unit" />
+                                            </div>
+                                        </th>
+                                        <th
+                                            className="py-4 px-3 text-right cursor-pointer hover:text-gray-300 transition-colors select-none"
+                                            onClick={() => handleSort('minStock')}
+                                        >
+                                            <div className="flex items-center justify-end gap-1.5">
+                                                <span>Min Restock</span>
+                                                <SortIcon column="minStock" />
+                                            </div>
+                                        </th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-white/5">
-                                    {items.map((item) => {
+                                    {sortedItems.map((item) => {
                                         const condition = getStockCondition(item.quantity, item.minStock);
                                         return (
                                             <tr key={item.id} className="hover:bg-white/[0.02] transition-colors">
