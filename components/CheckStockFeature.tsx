@@ -3,6 +3,7 @@ import { StockItem, StockCondition } from '../types';
 import { WARKOP_ITEMS } from '../constants';
 import { STOCK_CONDITION_CONFIG, STOCK_REPORT_INFO } from '../config';
 import { ArrowLeft, FileText, Phone, User, Clock, ArrowUpDown, ArrowUp, ArrowDown, Search } from 'lucide-react';
+import ReportModal from './ReportModal';
 
 type SortColumn = 'name' | 'condition' | 'quantity' | 'unit' | 'minStock';
 type SortDirection = 'asc' | 'desc';
@@ -78,6 +79,9 @@ export default function CheckStockFeature({ onBack }: Props) {
 
     // Search state
     const [searchQuery, setSearchQuery] = useState("");
+
+    // Report modal state
+    const [isReportModalOpen, setIsReportModalOpen] = useState(false);
 
     // Filtered items based on search
     const filteredItems = useMemo(() => {
@@ -302,8 +306,8 @@ export default function CheckStockFeature({ onBack }: Props) {
                 <div className="max-w-md md:max-w-lg mx-auto pointer-events-auto transition-all duration-300">
                     <div className="bg-gray-900 border border-white/10 rounded-2xl p-1.5 flex gap-2 shadow-2xl shadow-black/80">
                         <button
-                            className="group flex-1 bg-white/10 rounded-xl px-4 py-3.5 flex items-center justify-center gap-2.5 border border-white/5 text-gray-400 font-bold text-sm opacity-60 cursor-not-allowed transition-all"
-                            disabled
+                            onClick={() => setIsReportModalOpen(true)}
+                            className="group flex-1 bg-purple-500/20 hover:bg-purple-500/30 rounded-xl px-4 py-3.5 flex items-center justify-center gap-2.5 border border-purple-500/30 text-purple-400 font-bold text-sm transition-all active:scale-[0.98]"
                         >
                             <FileText size={18} />
                             <span>Generate Report</span>
@@ -318,6 +322,13 @@ export default function CheckStockFeature({ onBack }: Props) {
                     </div>
                 </div>
             </div>
+
+            {/* Report Modal */}
+            <ReportModal
+                isOpen={isReportModalOpen}
+                onClose={() => setIsReportModalOpen(false)}
+                items={items}
+            />
         </div>
     );
 }

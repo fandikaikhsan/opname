@@ -6,6 +6,7 @@ export interface StockItem {
   imageUrl: string;
   category: string;
   minStock: number;
+  supplierId: string;  // Link to supplier
 }
 
 export interface StockCardProps {
@@ -35,3 +36,21 @@ export interface Invoice {
 }
 
 export type StockCondition = 'bahaya' | 'low' | 'cukup' | 'banyak';
+
+// Supplier types
+export interface SupplierContact {
+  id: string;
+  type: 'whatsapp' | 'email';
+  value: string;
+}
+
+export interface Supplier {
+  id: string;
+  name: string;
+  alias?: string;
+  contacts: SupplierContact[];
+  messageTemplate?: string;
+  preferredContact?: string;
+  address?: string;
+  notes?: string;
+}
